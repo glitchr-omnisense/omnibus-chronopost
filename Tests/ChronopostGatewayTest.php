@@ -5,7 +5,7 @@ namespace Omnibus\Chronopost\Tests;
 use Omnibus\Chronopost\ChronopostGatewayFactory;
 use Omnibus\Exception\CarrierException;
 use Omnibus\Model\TrackingStatus;
-use Omnibus\Tests\Fixtures;
+use Omnibus\Testing\Fixtures;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
@@ -94,7 +94,7 @@ final class ChronopostGatewayTest extends TestCase
         self::assertStringContainsString('<productCode>01</productCode>', $this->calls[3][1], 'a service named wins over the range');
     }
 
-    /** @dataProvider refusedChilledParcels */
+    #[\PHPUnit\Framework\Attributes\DataProvider('refusedChilledParcels')]
     public function testAChilledParcelRefusedBeforeAnyCall(array $options, ?string $pickupPoint, string $message): void
     {
         try {
