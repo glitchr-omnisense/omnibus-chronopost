@@ -120,6 +120,9 @@ a product without an amount is left out.
 
 The pickup point's id itself is not sent in the request: see "Verified, and not" below.
 
+> [!WARNING]
+> Known defect: booking to a pickup point sends the relay product (`86`...) but never the pickup point's id (`Action/ShippingAction.php`), where the parcel should go to the point the customer chose.
+
 The tracking number is the first `skybillNumber` returned; the label is its `pdfEtiquette` (else
 `skybill`) base64-decoded, `application/pdf` or `application/zpl`; `trackingUrl` is
 `https://www.chronopost.fr/tracking-no-cms/suivi-page?listeNumerosLT=<number>`. A response
