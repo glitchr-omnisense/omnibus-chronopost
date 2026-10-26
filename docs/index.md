@@ -1,6 +1,6 @@
 # omnibus/chronopost
 
-Chronopost for [omniscient/omnibus](https://github.com/glitchr-studio/omnibus): prices, skybills
+Chronopost for [omnisense/omnibus](https://github.com/glitchr-omnisense/omnibus): prices, skybills
 with their labels (Chronofresh included), tracking, cancellation and Chronopost Pickup relays,
 through Chronopost's SOAP 1.1 web services on `https://ws.chronopost.fr`. The envelopes are
 written and read as XML over plain HTTP (`ext-soap` is not needed). The gateway calls:
@@ -22,7 +22,7 @@ endpoint: tests are made with its published test account on the same address.
 composer require omnibus/chronopost
 ```
 
-Requires PHP 8.2, `omniscient/omnibus` (2.x) and `symfony/http-client` (6.4, 7 or 8); given no
+Requires PHP 8.2, `omnisense/omnibus` (2.x) and `symfony/http-client` (6.4, 7 or 8); given no
 HTTP client, the factory makes one with `HttpClient::create()`. In a Symfony application with
 `Omnibus\Bridge\Symfony\OmnibusBundle`, the factory is registered as soon as the package is
 installed.
@@ -46,7 +46,7 @@ parcels handed over on the days the contract allows).
 | `account_number` | string | - | yes | the contract number |
 | `password` | string | - | yes | its web services password |
 | `sub_account` | ?string | `null` | no | sent as `subAccount` when booking |
-| `rates` | list | - | no | prices from configuration instead of Quickcost ([the rates option](https://github.com/glitchr-studio/omnibus/blob/2.x/docs/configuration.md#the-rates-option)): with it, Quickcost is not called |
+| `rates` | list | - | no | prices from configuration instead of Quickcost ([the rates option](https://github.com/glitchr-omnisense/omnibus/blob/2.x/docs/configuration.md#the-rates-option)): with it, Quickcost is not called |
 
 Shipment options (`Shipment::$options`):
 
