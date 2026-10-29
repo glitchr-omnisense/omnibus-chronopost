@@ -53,9 +53,9 @@ final class Mapping
         return ($date instanceof \DateTimeInterface ? $date : new \DateTimeImmutable($date))->format('Y-m-d');
     }
 
-    public static function valueXml(string $prefix, Address $a, bool $pro = false): string
+    public static function valueXml(string $prefix, Address $a): string
     {
-        return "<{$prefix}Civility>".($a->company ? 'E' : 'M')."</{$prefix}Civility>"
+        return "<{$prefix}Civility>".Api::civility($a)."</{$prefix}Civility>"
             ."<{$prefix}Name>".Api::e(mb_substr($a->company ?? $a->name, 0, 100))."</{$prefix}Name>"
             ."<{$prefix}Name2>".Api::e(mb_substr($a->company ? $a->name : '', 0, 100))."</{$prefix}Name2>"
             ."<{$prefix}Adress1>".Api::e(mb_substr($a->line(0), 0, 38))."</{$prefix}Adress1>"

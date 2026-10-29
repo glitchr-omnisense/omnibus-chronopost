@@ -72,7 +72,7 @@ final class Api
         return htmlspecialchars($s, \ENT_XML1 | \ENT_QUOTES, 'UTF-8');
     }
 
-    /** Chronopost's 3-digit type code for a sender/recipient: pro or private. */
+    /** Chronopost's civility code for a party: E for a company (Entreprise), M for a person. */
     public static function civility(\Omnibus\Model\Address $a): string
     {
         return $a->company ? 'E' : 'M';
