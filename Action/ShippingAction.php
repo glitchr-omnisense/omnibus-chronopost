@@ -15,7 +15,8 @@ use Omnibus\Request\Shipping;
 /**
  * ShippingServiceWS's shippingMultiParcelV4: the label (PDF; "ZPL" with
  * option label_format) for a product (service: 01 Chrono 13 by default; a
- * pickupPoint makes it a Relais product).
+ * pickupPoint makes it a Relais product, and its id the recipient reference,
+ * which is how Chronopost knows the point).
  *
  * Chronofresh: the shipment's `product` option (fresh, freeze, ambient)
  * picks the range's code (2R, 6S to a relay, 2S, 5M, 5Q) and `use_by` the
@@ -70,7 +71,7 @@ final class ShippingAction implements ActionInterface, ApiAwareInterface
             .'<shipperValue>'.Mapping::valueXml('shipper', $s->sender).'</shipperValue>'
             .'<customerValue>'.Mapping::valueXml('customer', $s->sender).'<printAsSender>N</printAsSender></customerValue>'
             .'<recipientValue>'.Mapping::valueXml('recipient', $s->recipient).'<recipientType>'.($s->recipient->company ? '1' : '2').'</recipientType></recipientValue>'
-            .'<refValue><recipientRef>'.Api::e(mb_substr((string) $s->reference, 0, 35)).'</recipientRef><shipperRef>'.Api::e(mb_substr((string) $s->reference, 0, 35)).'</shipperRef><customerSkybillNumber>'.Api::e(mb_substr((string) $s->reference, 0, 35)).'</customerSkybillNumber></refValue>'
+            .'<refValue><recipientRef>'.Api::e(mb_substr((string) ($s->pickupPoint ?? $s->reference), 0, 35)).'</recipientRef><shipperRef>'.Api::e(mb_substr((string) $s->reference, 0, 35)).'</shipperRef><customerSkybillNumber>'.Api::e(mb_substr((string) $s->reference, 0, 35)).'</customerSkybillNumber></refValue>'
             .$parcels
             .'<skybillParamsValue><mode>'.$format.'</mode><withReservation>0</withReservation></skybillParamsValue>'
             .'<password>'.Api::e($this->api->password).'</password><modeRetour>2</modeRetour><numberOfParcel>'.\count($s->parcels).'</numberOfParcel><version>2.0</version><multiParcel>'.(\count($s->parcels) > 1 ? 'Y' : 'N').'</multiParcel>'
