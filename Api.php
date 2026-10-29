@@ -3,6 +3,7 @@
 namespace Omnibus\Chronopost;
 
 use Omnibus\Exception\CarrierException;
+use Omnibus\Http\Redaction;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -47,21 +48,23 @@ final class Api
             $status = $response->getStatusCode();
             $content = $response->getContent(false);
         } catch (HttpExceptionInterface $e) {
-            throw new CarrierException('chronopost', 'Chronopost request failed: '.$e->getMessage(), null, $e);
+            $secrets = $this->secrets();
+
+            throw Redaction::withoutArguments(new CarrierException('chronopost', 'Chronopost request failed: '.Redaction::text($e->getMessage(), $secrets), null, Redaction::copy($e, $secrets)));
         }
         $xml = @simplexml_load_string(preg_replace(['/<(\/?)[\w-]+:/', '/\sxmlns(:\w+)?="[^"]*"/'], ['<$1', ''], $content));
         if (false === $xml) {
-            throw new CarrierException('chronopost', sprintf('Chronopost answered HTTP %d with a body that is not SOAP.', $status));
+            throw Redaction::withoutArguments(new CarrierException('chronopost', sprintf('Chronopost answered HTTP %d with a body that is not SOAP.', $status)));
         }
         if (isset($xml->Body->Fault)) {
-            throw new CarrierException('chronopost', (string) ($xml->Body->Fault->faultstring ?? 'SOAP fault'));
+            throw Redaction::withoutArguments(new CarrierException('chronopost', (string) ($xml->Body->Fault->faultstring ?? 'SOAP fault')));
         }
         $return = $xml->Body->children()[0]->return ?? null;
         if ($status >= 400 || null === $return) {
-            throw new CarrierException('chronopost', sprintf('HTTP %d', $status));
+            throw Redaction::withoutArguments(new CarrierException('chronopost', sprintf('HTTP %d', $status)));
         }
         if (isset($return->errorCode) && '0' !== (string) $return->errorCode) {
-            throw new CarrierException('chronopost', (string) ($return->errorMessage ?: 'Chronopost error '.$return->errorCode), (string) $return->errorCode);
+            throw Redaction::withoutArguments(new CarrierException('chronopost', (string) ($return->errorMessage ?: 'Chronopost error '.$return->errorCode), (string) $return->errorCode));
         }
 
         return $return;
@@ -76,5 +79,15 @@ final class Api
     public static function civility(\Omnibus\Model\Address $a): string
     {
         return $a->company ? 'E' : 'M';
+    }
+
+    /**
+     * What a failure must not carry: the credentials, and what a request made of them.
+     *
+     * @return list<string>
+     */
+    private function secrets(string ...$more): array
+    {
+        return [$this->password, ...$more];
     }
 }
