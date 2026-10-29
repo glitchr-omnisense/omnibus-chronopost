@@ -109,19 +109,16 @@ a product without an amount is left out.
   `M` without; the name is the company (else the person) and the second name the person when
   there is a company, both cut to 100 characters, street lines to 38, the city to 50; the phone
   is sent as given, as phone and as mobile; the recipient type is `1` (company) or `2` (private);
-- the shipment's `reference` (35 characters) is sent as recipient reference, shipper reference and
-  customer skybill number;
+- the shipment's `reference` (35 characters) is sent as shipper reference and customer skybill
+  number, and as recipient reference at home; to a pickup point the recipient reference is the
+  point's id (`Shipment::$pickupPoint`, an `identifiant` from the relay search), which is how
+  Chronopost knows the Chrono Relais point to deliver to;
 - each parcel is a `skybillValue`: its rank, weight in kilograms (at least 0.10), dimensions when
   all three are given, its declared `value` as customs value in its currency, object type `MAR`,
   no cash on delivery and no insurance;
 - the ship date is `Shipment::$shippingDate`, else now, and the ship hour the current hour;
 - `withReservation` 0, `modeRetour` 2, `multiParcel` `Y` for more than one parcel;
 - with a `pickupPoint`, an `esdValue` block whose retrieval and closing times are the ship date.
-
-The pickup point's id itself is not sent in the request: see "Verified, and not" below.
-
-> [!WARNING]
-> Known defect: booking to a pickup point sends the relay product (`86`...) but never the pickup point's id (`Action/ShippingAction.php`), where the parcel should go to the point the customer chose.
 
 The tracking number is the first `skybillNumber` returned; the label is its `pdfEtiquette` (else
 `skybill`) base64-decoded, `application/pdf` or `application/zpl`; `trackingUrl` is
@@ -263,7 +260,8 @@ call.
 Tested offline: `Tests/ChronopostGatewayTest.php` (Quickcost's products cheapest first with taxes
 included and the relay flag, the account in the body, the weight in kilograms; a skybill with its
 PDF, the company as name and the person as second name; Chronofresh ranges at home and to a relay,
-the use-by and sell-by dates, the Saturday service, a service winning over the range, chilled
+the use-by and sell-by dates, the Saturday service, a booking to a pickup point naming the point
+as recipient reference, a service winning over the range, chilled
 parcels refused before any call; tracking oldest first with its location, relays with their
 distance and hours, Sunday closed, the cancellation; an error code raised with its message) and
 `Tests/ChronopostContractTest.php`, the family's conformance suite on recorded answers. The example
@@ -274,8 +272,8 @@ documentation and was not yet run against the test account. Chronofresh is not v
 real contract: its codes and fields come from public integrations of Chronopost Food, and the
 order of `scheduledValue` in the request and the Saturday service are to be confirmed on a first
 real skybill. The weekday numbering of the relays' `jour` (taken as ISO, 1 = Monday) is unchecked
-against a real answer. Booking to a pickup point sends a relay product but no relay identifier: which relay the
-parcel goes to is not checked.
+against a real answer. The pickup point's id travels as `recipientRef`, as Chronopost's own
+PrestaShop and Magento 2 modules send it; not yet checked on a real skybill.
 
 ## Responsibility
 

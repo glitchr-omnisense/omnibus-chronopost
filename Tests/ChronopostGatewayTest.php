@@ -142,4 +142,21 @@ final class ChronopostGatewayTest extends TestCase
             self::assertStringContainsString('Compte inconnu', $e->getMessage());
         }
     }
+
+    /**
+     * Booking to a Chrono Relais point names the point: shippingMultiParcelV4's
+     * refValue.recipientRef carries its id (as Chronopost's own PrestaShop module, postSkybill.php,
+     * and its Magento 2 module, Helper/Webservice.php, send it); the shipment's reference stays
+     * the shipper reference and the customer skybill number.
+     */
+    public function testABookingToAPickupPointNamesThePoint(): void
+    {
+        $s = Fixtures::shipment();
+        $this->gateway()->ship(new \Omnibus\Model\Shipment($s->sender, $s->recipient, $s->parcels, null, 'P12345', 'CMD-1042'));
+        self::assertStringContainsString('<productCode>86</productCode>', $this->calls[0][1]);
+        self::assertStringContainsString('<recipientRef>P12345</recipientRef><shipperRef>CMD-1042</shipperRef><customerSkybillNumber>CMD-1042</customerSkybillNumber>', $this->calls[0][1]);
+
+        $this->gateway()->ship(new \Omnibus\Model\Shipment($s->sender, $s->recipient, $s->parcels, reference: 'CMD-1042'));
+        self::assertStringContainsString('<recipientRef>CMD-1042</recipientRef>', $this->calls[1][1], 'at home: the reference, as before');
+    }
 }
