@@ -1,0 +1,109 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: Action/ShippingAction.php
+
+		-
+			message: '#^Parameter \#1 \$date of static method Omnibus\\Chronopost\\Mapping\:\:day\(\) expects DateTimeInterface\|string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Action/ShippingAction.php
+
+		-
+			message: '#^Parameter \#2 \$range of static method Omnibus\\Chronopost\\Mapping\:\:product\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Action/ShippingAction.php
+
+		-
+			message: '#^Method Omnibus\\Chronopost\\Api\:\:secrets\(\) should return list\<string\> but returns non\-empty\-array\<int\<0, max\>\|string, string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: Api.php
+
+		-
+			message: '#^Parameter \#1 \$data of function simplexml_load_string expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Api.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 2
+			path: ChronopostGatewayFactory.php
+
+		-
+			message: '#^Parameter \#4 \$subAccount of class Omnibus\\Chronopost\\Api constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ChronopostGatewayFactory.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Cannot access offset 1 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 20
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Cannot access property \$location on Omnibus\\Model\\TrackingEvent\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Method Omnibus\\Chronopost\\Tests\\ChronopostGatewayTest\:\:chilled\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Method Omnibus\\Chronopost\\Tests\\ChronopostGatewayTest\:\:refusedChilledParcels\(\) return type has no value type specified in iterable type iterable\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Method Omnibus\\Chronopost\\Tests\\ChronopostGatewayTest\:\:testAChilledParcelRefusedBeforeAnyCall\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of static method PHPUnit\\Framework\\Assert\:\:assertStringContainsString\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 20
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Parameter \#2 \$haystack of static method PHPUnit\\Framework\\Assert\:\:assertStringNotContainsString\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Parameter \#7 \$options of class Omnibus\\Model\\Shipment constructor expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Tests/ChronopostGatewayTest.php
+
+		-
+			message: '#^Property Omnibus\\Chronopost\\Tests\\ChronopostGatewayTest\:\:\$calls type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: Tests/ChronopostGatewayTest.php

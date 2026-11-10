@@ -4,6 +4,8 @@ namespace Omnibus\Chronopost;
 
 use Omnibus\Exception\CarrierException;
 use Omnibus\Http\Redaction;
+use Omnibus\Http\Throttle;
+use Omnisense\Contracts\Policy\Backoff;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -27,6 +29,8 @@ final class Api
         public readonly string $password,
         public readonly ?string $subAccount = null,
         private readonly int $timeout = 20,
+        /** The waits the carrier asks for (omnisense/contracts' Backoff): no call while one lasts, a 429 a RateLimitedException, never retried */
+        private readonly ?Backoff $backoff = null,
     ) {
     }
 
@@ -40,12 +44,14 @@ final class Api
         [$path, $ns] = $service;
         $envelope = '<?xml version="1.0" encoding="utf-8"?><soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cxf="'.$ns.'"><soapenv:Header/><soapenv:Body><cxf:'.$operation.'>'.$params.'</cxf:'.$operation.'></soapenv:Body></soapenv:Envelope>';
         try {
+            Throttle::before($this->backoff);
             $response = $this->http->request('POST', self::BASE.$path, [
                 'headers' => ['Content-Type' => 'text/xml; charset=utf-8', 'SOAPAction' => '""'],
                 'body' => $envelope,
                 'timeout' => $this->timeout,
             ]);
             $status = $response->getStatusCode();
+            Throttle::after($this->backoff, 'chronopost', $status, $response->getHeaders(false));
             $content = $response->getContent(false);
         } catch (HttpExceptionInterface $e) {
             $secrets = $this->secrets();

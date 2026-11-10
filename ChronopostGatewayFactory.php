@@ -34,12 +34,13 @@ final class ChronopostGatewayFactory extends GatewayFactory
         $config->defaults([
             'omnibus.factory_name' => 'chronopost',
             'omnibus.factory_title' => 'Chronopost',
+            'omnibus.policy' => __DIR__.'/policy.json',
             'omnibus.required_options' => ['account_number', 'password'],
             'sub_account' => null,
             'omnibus.api' => function (Config $c) {
                 $http = $this->http ?? HttpClient::create();
 
-                return new Api($http, (string) $c['account_number'], (string) $c['password'], $c['sub_account'] ?: null);
+                return new Api($http, (string) $c['account_number'], (string) $c['password'], $c['sub_account'] ?: null, backoff: $c->backoff());
             },
             'omnibus.action.rating' => static fn (Config $c) => $c->get('rates') ? null : new RatingAction(),
             'omnibus.action.shipping' => new ShippingAction(),
