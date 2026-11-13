@@ -4,6 +4,42 @@ Chronopost for [omnisense/omnibus](https://github.com/glitchr-omnisense/omnibus)
 skybills with their labels (ShippingServiceWS), tracking and cancellation (TrackingServiceWS),
 Pickup relays (PointRelaisServiceWS) - the SOAP web services on ws.chronopost.fr.
 
+## Install and a first call
+
+```sh
+composer require omnibus/chronopost
+```
+
+No account for this first call: Chronopost's answer is recorded
+(`Omnibus\Testing\RecordedHttpClient` answers in place of the API), so nothing leaves the process.
+With your own credentials, give the factory your HTTP client (or none: it makes its own) and drop
+the recorded one.
+
+```php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Omnibus\Chronopost\ChronopostGatewayFactory;
+use Omnibus\Testing\RecordedHttpClient;
+
+// Chronopost's answer, recorded: no account, and nothing leaves the process.
+$http = new RecordedHttpClient([
+    'body:trackSkybillV2' => '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns1:trackSkybillV2Response xmlns:ns1="http://cxf.soap.chronopost.fr/">'
+        .'<return><errorCode>0</errorCode><listEventInfoComp><events><code>D</code><eventDate>2026-10-02T11:30:00+02:00</eventDate><eventLabel>Colis livré</eventLabel>'
+        .'<officeLabel>PARIS 09</officeLabel><zipCode>75009</zipCode></events></listEventInfoComp></return></ns1:trackSkybillV2Response></soap:Body></soap:Envelope>',
+]);
+$gateway = (new ChronopostGatewayFactory($http))->create(['account_number' => ChronopostGatewayFactory::TEST_ACCOUNT, 'password' => ChronopostGatewayFactory::TEST_PASSWORD]);
+
+$tracking = $gateway->track('XY123456789FR');
+echo $tracking->status->value, ' - ', $tracking->latest()?->description, "\n";   // delivered - Colis livré
+```
+
+A real call needs a Chronopost account (the credentials below). The answer is shaped after
+Chronopost's published documentation; the package has not been run against its service yet.
+
+## Configuration
+
 ```php
 $gateway = (new ChronopostGatewayFactory($http))->create($options);   // $http: the application's HTTP client - none given, the factory makes its own; the options below
 ```
